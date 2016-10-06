@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# slack_service
+# Icinga 1.x (or Nagios) to push alerts into a channel of Slack via Incoming WebHooks
+#
+# Inspired by Smokeping Slack notification
+#
+# Modified by Stephen HC Lin
+
+#Modify these variables for your environment
+NOTIFICATIONTYPE="$1"
+SERVICEDESC="$2"
+HOSTNAME="$3"
+HOSTADDRESS="$4"
+SERVICESTATE="$5"
+SERVICEOUTPUT="$6"
+
+#Set the message icon based on icinga service state
+if [ "$SERVICESTATE" = "CRITICAL" ]
+then
+    color="danger"
+elif [ "$SERVICESTATE" = "WARNING" ]
+then
+    color="warning"
+elif [ "$SERVICESTATE" = "OK" ]
+then
+    color="good"
+elif [ "$SERVICESTATE" = "UNKNOWN" ]
+then
+    color="warning"
+else
+    color="warning"
+fi
+
+#Construct Payload
+#                    "fallback": "Icinga '${NOTIFICATIONTYPE}': '${HOSTNAME}'-'${SERVICEDESC}' is '${SERVICESTATE}'",
+
+    data='{
+            "username": "Icinga - LAB Service Check",
+            "attachments": [
+                {
+                    "fallback": "Icinga '${NOTIFICATIONTYPE}': '${HOSTNAME}'-'${SERVICEDESC}' is '${SERVICESTATE}'"
+                },
+                {
+                    "title": "'${NOTIFICATIONTYPE}': '${HOSTNAME}'-'${SERVICEDESC}' is '${SERVICESTATE}'",
+                    "color": "'${color}'"
+                },
+                {
+                    "text": " ",
+                    "fields": [
+                        {
+                            "title": "HOST ADDRESS",
+                            "value": "'${HOSTADDRESS}'",
+                            "short": "true"
+                        },
+                        {
+                            "title": "SERVICE",
+                            "value": "'${SERVICEDESC}'",
+                            "short": "true"
+                        },
+                        {
+                            "title": "Additional Info",
+                            "value": "'${SERVICEOUTPUT}'",
+                            "short": "true"
+                        },
+                        {
+                            "title": "See Icinga",
+                            "value": "http://YourICingaHost/icinga/",
+                            "short": "true"
+                        }
+                    ]
+                }
+            ],
+            "channel": "#YourChannel"
+        }'
+
+#Send message to Slack
+echo $data
+# Please do copy https://hooks.slack.com/services/Txxx/Bxxx/xxx from your Incoming WebHooks
+curl -X POST -H "Content-type: application/json" --data "$data" https://hooks.slack.com/services/Txxxxxxxx/Bxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxx
