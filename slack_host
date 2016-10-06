@@ -7,7 +7,6 @@
 #
 # Modified by Stephen HC Lin
 
-#Modify these variables for your environment
 NOTIFICATIONTYPE="$1"
 HOSTNAME="$2"
 HOSTSTATE="$3"
