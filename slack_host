@@ -52,7 +52,7 @@ fi
                     "fields": [
                         {
                             "title": "HOST ADDRESS",
-                            "value": "'${HOSTADDRES}'",
+                            "value": "'${HOSTADDRESS}'",
                             "short": "true"
                         },
                         {
